@@ -1,0 +1,6 @@
+node_modules/
+conndb.js
+app.js
+awskey.json
+*.log
+

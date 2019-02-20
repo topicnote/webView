@@ -1,0 +1,161 @@
+<%- include('header', {genre: {}, user: user}); %>
+<style>
+    .item {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+    .sortable-chosen {
+        color: #fff;
+        background-color: #48c9ed;
+    }
+</style>
+<script type="text/javascript" src="/src/js/Sortable-master/Sortable.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var data = <%- JSON.stringify(autoComp) %>;
+        var elems = document.querySelectorAll('.autocomplete');
+        var instances = M.Autocomplete.init(elems, {'data': data});
+    });
+
+    function reGenerateSortable() {
+        $(function () {
+            Sortable.create($('.list')[0], {
+                animation: 110,  // ミリ秒で指定
+                store: {
+                    get: function (sortable) {
+                        var order = sortable.toArray();
+                        $('#elemArray').val(order);
+                        console.log(order);
+                    },
+                    set: function (sortable) {
+                        var order = sortable.toArray();
+                        $('#elemArray').val(order);
+                        console.log(order);
+                    }
+                }
+            });
+        });
+    };
+
+    reGenerateSortable();
+</script>
+
+<div class="fixed-action-btn">
+    <a class="btn-floating btn-large red" onclick="">
+        <i class="large material-icons">add</i>
+    </a>
+    <ul>
+        <li><a class="btn-floating red" onclick="addElem('text')"><i class="material-icons">insert_comment</i></a></li>
+        <li><a class="btn-floating yellow darken-1" onclick="addElem('photo')"><i
+                        class="material-icons">insert_photo</i></a></li>
+        <li><a class="btn-floating green" onclick="addElem('md')"><i class="material-icons">chrome_reader_mode</i></a>
+        </li>
+        <li><a class="btn-floating blue" onclick="addElem('some')"><i class="material-icons">attach_file</i></a></li>
+    </ul>
+</div>
+<div class="row">
+    <div class="col s12 l10 offset-l1">
+        <div class="wrapper">
+            <br>
+            <b><%= user.name %></b> としてログイン中<br>
+
+            <p class="main-title"><%= title %></p>
+            <form action="/add" method="post" class="board-form" autocomplete="off">
+                <input type="hidden" name="elemArray" id="elemArray" class="input">
+                <h6>記事タイトル</h6>
+                <input type="text" name="title_ja" class="input" placeholder="簡潔に分かりやすく" required><br>
+
+                <div class="list" id="elem"> <!--並べ替え-->
+
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+                    <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+                    <script>
+                        function rmElem(id) {
+                            id.remove();
+                            reGenerateSortable();
+                        }
+
+                        var cnt = 0;
+
+                        function addElem(type) {
+                            cnt++;
+                            var elemID = type + cnt;
+                            var pre = '<div class="item" id="' + elemID + '" data-id="' + elemID + '">';
+                            var ope = '<i class="material-icons prefix">open_with</i>移動 <button onclick="rmElem(' + elemID + ')"><i class="material-icons prefix">delete_forever</i>削除</button>';
+                            switch (type) {
+                                case 'text':
+                                    $(function () {
+                                        $('#elem').prepend($(pre).html('<h6>自由テキスト</h6>' + ope + '<textarea id="editor" name="data" rows="8" cols="40" placeholder="文字を入力することが出来ます。"></textarea>'));
+
+                                    });
+                                    break;
+                                case 'photo':
+                                    $(function () {
+                                        $('#elem').prepend($(pre).html('<h6>画像</h6>' + ope + '<div class="file-field input-field">\n' +
+                                            '                            <div class="btn">\n' +
+                                            '                                <span>ファイルを選択</span>\n' +
+                                            '                                <input id="icon" type="file" name="icon">\n' +
+                                            '                            </div>\n' +
+                                            '                            <div class="file-path-wrapper">\n' +
+                                            '                                <input class="file-path validate" type="text">\n' +
+                                            '                            </div>\n' +
+                                            '                        </div>'));
+
+                                    });
+                                    break;
+                                case 'md':
+                                    $(function () {
+                                        $('#elem').prepend($(pre).html('<h6>フリーエリア</h6>' + ope + '<p>F9:プレビュー表示 F11:全画面表示</p>\n' +
+                                            '                        <textarea id="htmleditor" name="data" rows="8" cols="40"\n' +
+                                            '                                  placeholder="このエリアは、マークダウン記法で記入することが出来ます。また、html,JavaScriptを記入することも出来ます。"></textarea>\n' +
+                                            '                        </div>'));
+
+                                        var simplemde = new SimpleMDE({
+                                            element: document.getElementById("htmleditor"),
+                                            spellChecker: false,
+                                            showIcons: ["heading-1", "heading-2", "heading-3", "code", "table"]
+                                        });
+                                    })
+                                default:
+                                    break;
+                            }
+                            reGenerateSortable();
+                        }
+                    </script>
+                </div>
+
+                <div class="input-field col s12">
+                    <i class="material-icons prefix">textsms</i>
+                    <input type="text" id="autocomplete-input" name="topic_name" class="autocomplete">
+                    <label for="autocomplete-input">トピック設定</label>
+                </div>
+
+                <!--<p>-->
+                    <!--<label>-->
+                        <!--<input name="public" type="radio" checked/>-->
+                        <!--<span><b>公開</b></span>-->
+                    <!--</label>-->
+                <!--</p>-->
+                <!--<p>-->
+                    <!--<label>-->
+                        <!--<input name="draft" type="radio"/>-->
+                        <!--<span><b>下書き保存</b></span>-->
+                    <!--</label>-->
+                <!--</p>-->
+
+                <button class="btn waves-effect waves-light" type="submit" name="action">保存・プレビュー<i
+                            class="material-icons right">publish</i></button>
+            </form>
+            <h4>結果</h4>
+            <p><%= dbres %></p>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+
+

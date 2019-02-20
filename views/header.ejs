@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Topic Note</title>
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+</head>
+
+<body>
+
+<script>
+    // M.AutoInit();
+    document.addEventListener('DOMContentLoaded', function () {
+        var elems = document.querySelectorAll('.modal');
+        var instances = M.Modal.init(elems);
+    });
+    document.addEventListener('DOMContentLoaded', function () {
+        var elems = document.querySelectorAll('.collapsible');
+        var instances = M.Collapsible.init(elems);
+    });
+    document.addEventListener('DOMContentLoaded', function() {
+        var elems = document.querySelectorAll('.sidenav');
+        var instances = M.Sidenav.init(elems);
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var elems = document.querySelectorAll('.fixed-action-btn');
+        var instances = M.FloatingActionButton.init(elems);
+    });
+
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function() {scrollFunction()};
+
+    function scrollFunction() {
+        // if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+        //     document.getElementById("myBtn").style.display = "block";
+        // } else {
+        //     document.getElementById("myBtn").style.display = "none";
+        // }
+    }
+
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    }
+
+</script>
+<div class="fixed-action-btn">
+    <a class="btn-floating btn-large red" onclick="topFunction()">
+        <i class="large material-icons">arrow_upward</i>
+    </a>
+    <!--<ul>-->
+    <!--<li><a class="btn-floating red"><i class="material-icons">insert_chart</i></a></li>-->
+    <!--<li><a class="btn-floating yellow darken-1"><i class="material-icons">format_quote</i></a></li>-->
+    <!--<li><a class="btn-floating green"><i class="material-icons">publish</i></a></li>-->
+    <!--<li><a class="btn-floating blue"><i class="material-icons">attach_file</i></a></li>-->
+    <!--</ul>-->
+</div>
+
+<nav class="nav-extended">
+    <div class="container">
+        <div class="nav-wrapper">
+            <div class="hide-on-small-only"><a href="/" class="brand-logo">Topic Note</a></div>
+            <a href="javascript:void(0)" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
+                <%  if(user==null){ %>
+                <li><a href="/login">ログイン</a></li>
+                <%}else{%>
+                    <li><a href="#mypage"><b><%=user.name%></b></a></li>
+                <%};%>
+            </ul>
+        </div>
+        <div class="nav-content">
+            <ul class="tabs tabs-transparent">
+                <%
+                var i = 0;
+                        while (genre[i] != null) {
+                %>
+
+                <li class="tab"><a class="active" href="/g/<%= genre[i].id %>"><%= genre[i].title_ja %></a></li>
+
+                <%
+                    i++;
+                };
+                %>
+            </ul>
+        </div>
+    </div>
+</nav>
+<ul id="slide-out" class="sidenav">
+    <%  if(user==null){ %>
+    <li>追加機能を利用するには
+    <a href="/login">ログイン</a>が必要です。
+    </li>
+        <div class="section">
+            <form action="/login" method="post" class="board-form">
+                <span class="label">Eメール</span><input type="email" name="email" class="input" required><br>
+                <br>
+                <span class="label">パスワード</span><input type="password" name="password" class="input" required><br>
+                <br>
+                <button type="submit" class="waves-effect waves-light btn-large"><i
+                            class="material-icons left">send</i>ログイン
+                </button>
+            </form>
+            <br>
+        </div>
+        <% if (typeof userObj !== 'undefined') { %>
+            <p class="error"><%= noUser %></p>
+        <% } %>
+        <div class="section">
+            <a href="/register" class="btn">新規登録</a>
+        </div>
+    <%
+    }else{
+    %>
+    <li><div class="user-view">
+            <div class="background">
+                <img src="https://www.gstatic.com/webp/gallery/<%= user.id %>.jpg">
+            </div>
+            <a href="#user"><img class="circle" src="https://s3-ap-northeast-1.amazonaws.com/topicnote/userProfile_<%=user.id%>.jpg" alt="アイコン未設定"></a>
+
+            <a href="#name"><span class="white-text name"><%=user.name%></span></a>
+        </div></li>
+    <li><a href="/add"><i class="material-icons">cloud</i>新規コンテンツ投稿</a></li>
+    <li><a href="/users/list">コンテンツ管理</a></li>
+    <li><div class="divider"></div></li>
+    <li><a class="subheader">各種設定</a></li>
+    <li><a class="waves-effect" href="#!">ログイン情報変更</a></li>
+            <li><a class="waves-effect" href="/logout">ログアウトする</a></li>
+    <%};%>
+</ul>
+<a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>

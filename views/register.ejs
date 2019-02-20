@@ -1,0 +1,28 @@
+<%- include('header', {genre: {}, user:null}); %>
+<div class="wrapper">
+    <div class="row">
+        <div class="col s12 l5">
+            <div class="section">
+                <p class="main-title"><h3><%= title %></h3></p>
+                <form action="/users" method="post" class="board-form">
+                    <span class="label">表示名(全公開されます/日本語可)</span><input type="text" name="user_name" class="input" required><br>
+                    <br>
+                    <span class="label">Eメール(非公開)</span><input type="email" name="email" class="input" required><br>
+                    <br>
+                    <span class="label">パスワード(非公開,暗号化して保管されます)</span><input type="password" name="password" class="input" required><br>
+                    <br>
+                    <button type="submit" class="waves-effect waves-light btn-large"><i
+                                class="material-icons left">send</i>登録
+                    </button>
+
+                </form>
+                <% if (typeof emailExists !== 'undefined') { %>
+                    <p class="error"><%= emailExists %></p>
+                <% } %>
+                <br><br><a href="/" class="btn">登録せずに戻る</a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

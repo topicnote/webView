@@ -1,0 +1,39 @@
+<%- include('header', {genre: genre, user:user});%>
+<div class="row">
+    <div class="col s12 l10 offset-l1">
+        <div class="col s12 l7">
+        <div class="section">
+
+            <h5><%= title %></h5>
+            <ul class="collapsible popout">
+                <%
+                contents_list.forEach(function (row) { //コンテンツ
+                %>
+                <li class="collection-item avatar">
+                    <div class="collapsible-header">
+                        <span class="title"><b><a href="<%= row.contents_url %>"><%= row.title_ja %></a></b></span>
+                        <%=row.userid%><br>
+                        <div style="float: right;"><%= row.created_at %></div>
+                    </div>
+                    <div class="collapsible-body">
+                        <%-data[row.id]%>
+                    </div>
+                </li>
+
+                <%
+                });
+                %>
+            </ul>
+        </div>
+        </div>
+            <div class="col s12 l3">
+                トピック詳細情報
+            </div>
+
+    </div>
+</div>
+</div>
+
+
+</body>
+</html>

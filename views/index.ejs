@@ -1,0 +1,138 @@
+<%- include('header', {genre: genre, user: user}); %>
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+<script>
+    $('#m').val('New Text');
+    M.textareaAutoResize($('#m'));
+
+    $(function () {
+        var socket = io();
+        socket.emit('client_to_server_join', <%- num %>);
+        if (<%- JSON.stringify(user) %> !=
+        null
+    )
+        {
+            var userInstance = <%- JSON.stringify(user) %>;
+            $('form[name="chat"]').submit(function () {
+                socket.emit('chat message', $('#m').val(), userInstance); //default num は index.js で0に設定している
+                document.chat.reset();
+                return false;
+            });
+        }
+    else
+        {
+        }
+        ;
+
+        socket.on('chat message', function (id, name, msg, date) { //サーバーサイド(app.js)から受け取ったmsgの表示
+            if (id == 0) {
+                $('#messages').prepend($('<li>').html('<i class="material-icons">announcement</i><b>' + name + '</b> ' + msg + '<br>' + date + '<div class="divider"></div>'));
+            } else {
+                $('#messages').prepend($('<li>').html('<img class="circle" src="https://s3-ap-northeast-1.amazonaws.com/topicnote/userProfile_' + id + '.jpg" width="30px" height="30px"><b>' + name + '</b> ' + msg + '<br>' + date + '<div class="divider"></div>'));
+                // $('#messages').append($('<li>').text(msg));
+            }
+        });
+
+    });
+
+</script>
+<div class="row">
+    <div class="col s12 m8 l7">
+        <div class="section">
+
+            <%
+            var topic_list = JSON.parse(genre[num - 1].topic_list); //str->array
+            var k = 0; //sample image
+            if (Array.isArray(topic_list)) {
+            topic_list.forEach(function (eachTopicID) { //トピック
+                //トピックcard
+                k++;
+                if (k == 6) k = 1; //sample image     %>
+            <div class="col s12 m6 l6">
+                <div class="card small">
+                    <div class="card-image">
+                        <img src="https://www.gstatic.com/webp/gallery/<%= k %>.jpg">
+                        <span class="card-title"><%= topic[eachTopicID].title_ja %></span>
+                    </div>
+                    <div class="card-content">
+                        <%
+                            //if (topic[eachTopicID].edited_at )  %>
+                        <span class="new badge">1</span>
+                        <p>ここにトピックの概要文を挿入</p>
+                    </div>
+                    <div class="card-action">
+                        <!--<a class="modal-trigger" href="#modal<%= eachTopicID %>">詳細</a>-->
+                        <a href="/g/t/<%= topic[eachTopicID].id %>">詳細</a>
+
+                    </div>
+                </div>
+            </div>
+            <% //modal開始 トピックをフロート表示（トピック内コンテンツ一覧を表示）      %>
+            <div id="modal<%= eachTopicID %>" class="modal">
+                <div class="modal-content">
+                    <h4><%= topic[eachTopicID].title_ja %><a
+                                class="btn-floating halfway-fab waves-effect waves-light red"><i class="material-icons">add</i></a>
+                    </h4>
+                    <a href="/g/t/<%= topic[eachTopicID].id %>"><p>コンテンツ一覧(仮ボタン)</p></a>
+
+                    <%
+                    conn.query('SELECT * FROM `contents` where json_contains(`topic`,"' + eachTopicID + '")', function (err, dbres, fields) { //トピックIDが含まれるコンテンツを検索
+                        var contents_list = dbres;
+                        //コンテンツリスト表示
+                    %>
+                    <ul class="collapsible">
+                        <%
+                        contents_list.forEach(function (row) { //コンテンツ
+                        %>
+                        <li>
+                            <div class="collapsible-header">
+                                <a href="<%= row.contents_url %>"><%= row.title_ja %></a>
+                            </div>
+                            <div class="collapsible-body">
+                                <!--<%- // data[row.id]   %>-->
+                            </div>
+                        </li>
+                        <%
+                        });
+                        %>
+                    </ul>
+
+                    <% }); %>
+                </div>
+                <div class="modal-footer">
+                    <a href="#!" class="modal-close waves-effect waves-green btn-flat">Agree</a>
+                </div>
+            </div>
+            <% }); //for each topic id
+            };//if      %>
+
+        </div>
+    </div>
+    <div class="col s12 m4 l5">
+        <div class="card-panel">
+            <%
+            if(user){
+            %>
+                <form action="" name="chat" autocomplete="off" >
+                    <!--<input id="m" autocomplete="off" placeholder="コメントを入力してください" type="text" class="materialize-textarea"/>-->
+                    <textarea id="m" class="materialize-textarea"></textarea>
+                    <button class="btn waves-effect waves-light small" style="float: right;"><i
+                                class="material-icons right">send</i>Send
+                    </button>
+                </form>
+            <%
+            }else{
+            %>
+
+                <p class="small">ログインすると投稿できます</p>
+            <%
+            }
+            %>
+            <ul id="messages"></ul>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>

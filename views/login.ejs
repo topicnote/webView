@@ -1,0 +1,27 @@
+<%- include('header', {genre: {}, user:null}); %>
+<div class="wrapper">
+    <div class="row">
+        <div class="col s12 l5">
+            <div class="section">
+                <p class="main-title"><h4><%= title %></h4></p>
+                <b><%=status%></b>
+                <form action="/login" method="post" class="board-form">
+                    <input type="hidden" name="redirect" value="<%=redirect%>">
+                    <span class="label">Eメール</span><input type="email" name="email" class="input" required><br>
+                    <br>
+                    <span class="label">パスワード</span><input type="password" name="password" class="input" required><br>
+                    <br>
+                    <button type="submit" class="waves-effect waves-light btn-large"><i
+                                class="material-icons left">send</i>ログイン
+                    </button>
+                </form>
+                <br>
+            </div>
+            <div class="section">
+                <a href="/register" class="btn">新規登録</a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

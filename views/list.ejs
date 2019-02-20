@@ -1,0 +1,138 @@
+<%- include('header', {genre: {}, user: user}); %>
+
+
+
+<script type="text/javascript" src="/src/js/jqueryImageResize/vendor/jquery.ui.widget.js"></script>
+<script type="text/javascript" src="/src/js/jqueryImageResize/jquery.iframe-transport.js"></script>
+<script type="text/javascript" src="/src/js/jqueryImageResize/jquery.fileupload.js"></script>
+<script type="text/javascript" src="/src/js/jqueryImageResize/jquery.fileupload-process.js"></script>
+<script type="text/javascript" src="/src/js/jqueryImageResize/jquery.fileupload-image.js"></script>
+
+<link rel="stylesheet" href="http://jcrop-cdn.tapmodo.com/v0.9.12/css/jquery.Jcrop.min.css" type="text/css"/>
+<script src="http://jcrop-cdn.tapmodo.com/v0.9.12/js/jquery.Jcrop.min.js"></script>
+
+<div class="wrapper">
+    <div class="row">
+        <div class="col s12 l5">
+            <div class="section">
+                <h3>ユーザー管理ページ</h3>
+                <%= title %>
+                <%= status %>
+                変更のある項目だけ入力し、[変更]を押すと変更されます。
+                <h5>投稿コンテンツ一覧</h5>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>記事タイトル</th>
+                        <th>作成日時</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <% dbres.forEach(function (row) { %>
+                        <tr>
+                            <td><%= row.title_ja %></td>
+                            <td><%= row.created_at %></td>
+                            <td><a href="#">編集</a></td>
+                        </tr>
+                    <% }) %>
+                    </tbody>
+                </table>
+                <div class="divider"></div>
+                <h5>プロフィール更新</h5>
+                <form action="/users/list" method="post" class="board-form" enctype="multipart/form-data">
+                    <div class="section">
+                    <h6>ユーザー名変更</h6>
+                    現在: <%= user.name %>
+                    <input placeholder="おなまえ" type="text" id="user_name" name="user_name" size="20" maxlength="20">
+                    <label for="user_name">20文字以内で入力してください</label>
+
+                    </div>
+                    <div class="divider"></div>
+
+                    <div class="section">
+                    <h6>アイコン変更</h6>
+                    <img class="circle"
+                         src="https://s3-ap-northeast-1.amazonaws.com/topicnote/userProfile_<%= user.id %>.jpg"
+                         alt="アイコン未設定">
+                    <div>
+                        <div class="file-field input-field">
+                            <div class="btn">
+                                <span>ファイルを選択</span>
+                                <input id="icon" type="file" name="icon">
+                            </div>
+                            <div class="file-path-wrapper">
+                                <input class="file-path validate" type="text">
+                            </div>
+                        </div>
+                        <input name="user_img_x" value="" id='user_img_x'>
+                        <input name="user_img_y" value="" id='user_img_y'>
+                        <input name="user_img_w" value="" id='user_img_w'>
+                        <input name="user_img_h" value="" id='user_img_h'>
+                        <input type="hidden" name="img_url" value="" id='file_name'>
+                    </div>
+                    <table>
+                        <tr>
+                            <td>
+                                アップロード画像を正方形に切り抜いてください
+                            </td>
+                            <td>
+                                アイコン画像
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="img-container">
+                                    <div class="preview"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="cropped_preview"
+                                     style="width:100px;height:100px;overflow:hidden;margin-left:5px;">
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+
+
+                    <script src="/src/js/src_crip_square.js"></script>
+
+                    <button class="btn waves-effect waves-light" type="submit" name="action">変更を登録
+                        <i class="material-icons right">send</i>
+                    </button>
+                    </div>
+
+                    <div class="divider"></div>
+
+
+                    <h5>登録情報変更</h5>
+                    <div class="section">
+                    <h6>メールアドレス変更</h6>
+                    現在設定中のアドレス: <%= user.email %>
+                    <input placeholder="abc.xxx@***.com" type="email" name="email">
+                    <label>受け取り可能なメールアドレスを入力してください</label>
+                    </div>
+                    <div class="divider"></div>
+
+                    <div class="section">
+                    <h6>パスワード変更</h6>
+                    <b>前のパスワード</b>
+                    <input placeholder="" type="password" name="oldpassword">
+                    <b>新しいパスワード</b>
+                    <input placeholder="" type="password" name="password">
+                    <button class="btn waves-effect waves-light" type="submit" name="action">変更を登録
+                        <i class="material-icons right">send</i>
+                    </button>
+                    </div>
+                </form>
+
+
+                <div class="divider"></div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
